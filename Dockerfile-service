@@ -1,0 +1,8 @@
+FROM node:13.6.0-alpine
+
+RUN mkdir /code
+WORKDIR /code
+ADD ./package.json /code
+ADD ./service.js /code
+RUN npm install
+ENTRYPOINT npm start

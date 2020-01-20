@@ -1,0 +1,17 @@
+{
+  "name": "envoy_resiliency_example",
+  "version": "1.0.0",
+  "description": "Example service project for test build resiliency service with envoy.",
+  "main": "service.js",
+  "scripts": {
+    "start": "node service.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "tangxinfa@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^7.4.0"
+  }
+}

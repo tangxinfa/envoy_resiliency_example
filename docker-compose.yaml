@@ -1,0 +1,80 @@
+version: "2"
+
+networks:
+  network:
+    driver: bridge
+
+services:
+  front-envoy:
+    image: envoyproxy/envoy-alpine:v1.7.0
+    container_name: resiliency_example-front-envoy
+    volumes:
+      - ./front-envoy.yaml:/etc/front-envoy.yaml
+    networks:
+      - network
+    entrypoint:
+      - "envoy"
+      - "-c"
+      - "/etc/front-envoy.yaml"
+      - "--service-cluster"
+      - "front-envoy"
+    expose:
+      - "80"
+      - "8001"
+    ports:
+      - "127.0.0.1:8000:80"
+      - "127.0.0.1:8001:8001"
+
+  instance1:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+    container_name: resiliency_example-instance1
+    networks:
+      - network
+    environment:
+      - INSTANCE_NAME=1
+    expose:
+      - "80"
+
+  instance1-envoy:
+    image: envoyproxy/envoy-alpine:v1.7.0
+    container_name: resiliency_example-instance1-envoy
+    volumes:
+      - ./instance1-envoy.yaml:/etc/service-envoy.yaml
+    entrypoint:
+      - "envoy"
+      - "-c /etc/service-envoy.yaml"
+      - "--service-cluster service"
+    networks:
+      - network
+    expose:
+      - "80"
+      - "8001"
+
+  instance2:
+    build:
+      context: .
+      dockerfile: Dockerfile-service
+    container_name: resiliency_example-instance2
+    networks:
+      - network
+    environment:
+      - INSTANCE_NAME=2
+    expose:
+      - "80"
+
+  instance2-envoy:
+    image: envoyproxy/envoy-alpine:v1.7.0
+    container_name: resiliency_example-instance2-envoy
+    volumes:
+      - ./instance2-envoy.yaml:/etc/service-envoy.yaml
+    entrypoint:
+      - "envoy"
+      - "-c /etc/service-envoy.yaml"
+      - "--service-cluster service"
+    networks:
+      - network
+    expose:
+      - "80"
+      - "8001"
